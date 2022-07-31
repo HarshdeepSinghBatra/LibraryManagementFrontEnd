@@ -53,10 +53,7 @@ const Navbar = ({ cartItems, setCartItems }) => {
         <>
             <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
                 <div className="nav-logo">
-                    <GiHamburgerMenu
-                        className='mobile-nav-open mobile-only'
-                        onClick={() => setIsNavMenuOpen(true)}
-                    />
+                    
                     <Link to='/' className='logo'>
                         <img src='/images/logo.png' alt='' />
                     </Link>
@@ -94,17 +91,7 @@ const Navbar = ({ cartItems, setCartItems }) => {
                 </div>
 
             </nav>
-            <div
-                ref={mobileNavOverlay}
-                className={isNavMenuOpen ? 'mobile-nav-overlay' : ''}
-            ></div>
-            <div
-                className={`mobile-side-menu mobile-only ${
-                    isNavMenuOpen && 'menu-open'
-                }`}
-            >
-               
-            </div>
+            
         </>
     )
 }

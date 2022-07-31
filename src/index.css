@@ -747,11 +747,12 @@ section h2 {
     border-bottom: 1px solid var(--color-gray);
     display: flex;
     gap: 1.5rem;
+    align-items: center;
 }
 
 .request .img-container {
-    width: 100px;
-    height: 100px;
+    width: 8rem;
+    aspect-ratio: 1 / 1;
 }
 
 .request .text {
@@ -765,6 +766,11 @@ text-align: left;
 
 .request .text span, .due-date span  {
     font-weight: bold;   
+}
+
+.request .text-content {
+    display: flex;
+    width: 100%;
 }
 
 .request .due-date {
@@ -834,7 +840,7 @@ th, td {
     padding: 0.5rem;
     resize: none;
 }
-.add-book select {
+.category-field select {
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 0.2rem;
@@ -1419,6 +1425,8 @@ footer a:hover {
         gap: 0.5rem;
     }
 
+    
+
     /* PRODUCT DETAILS */
     
     .product-images {
@@ -1437,6 +1445,12 @@ footer a:hover {
 
     .related-products-container {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* PROFILE */
+
+    .profile {
+        grid-template-columns: 2fr 5fr;
     }
 
 
@@ -1536,6 +1550,71 @@ footer a:hover {
         display: none;
     }
 
+    .search-form {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .search-form > * {
+        border-radius: 0.3rem !important;
+        padding: 1rem;
+    }
+
+    .search-form button {
+        width: fit-content;
+        margin: 0 auto;
+    }
+
+    /* PROFILE */
+
+    .profile {
+        grid-template-columns: 1fr;
+        min-height: 0; 
+    }
+
+    .requests {
+        min-height: 80vh;
+        padding-bottom: 4.5rem;
+    }
+
+    .request .text-content {
+        flex-direction: column;
+    }
+
+    .request .due-date {
+        margin-left: 0;
+    }
+
+    .request .due-date span {
+        margin-right: 0;
+    }
+
+    .profile-sidebar {
+        position: fixed;
+        bottom: 0;
+        height: fit-content;
+        left: 0;
+        right: 0;   
+        z-index: 90;
+        background: var(--color-light);
+        border-top: 2px solid var(--color-gray);
+    }
+
+    .profile-sidebar ul {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .profile-sidebar ul li {
+        display: flex;
+        justify-content: center;
+    }
+    .profile-sidebar ul li h1 {
+
+        font-size: 1rem;
+    }
     /* FOOTWEAR */
     .footwear-category {
         font-size: 0.7rem;

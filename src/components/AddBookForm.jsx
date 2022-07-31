@@ -159,9 +159,9 @@ const AddBookForm = ({ categories, setBooks }) => {
             </fieldset>
             <fieldset>
                 <input
+                    id="quantity"
                     type='number'
-                    defaultValue={1}
-                    placeholder='quantity'
+                    placeholder='Quantity'
                     {...register('quantity', {
                         required: true,
                     })}

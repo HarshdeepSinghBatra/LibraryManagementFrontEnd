@@ -65,6 +65,7 @@ const Profile = () => {
                     <div className="img-container">
                         <img src={item.bookId.image} alt="" />
                     </div>
+                    <div className="text-content">
                     <div className="text">
                         <h2>{item.bookId.title}</h2>
                         <p><span>Author: </span> {item.bookId.author}</p>
@@ -83,6 +84,7 @@ const Profile = () => {
                             </div>
                         </div>
                     )}
+                    </div>
                 </div>
             ))
         )
