@@ -1,32 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 
-const ShoeBox = ({ role, shoeItem }) => {
-
-    const [shoeName, setShoeName] = useState()
-
-    const setTrimmedName = name => {
-        const trimmed = name.substr(0, 30)
-        const final = trimmed.substr(0, Math.min(trimmed.length, trimmed.lastIndexOf(" ")))
-        setShoeName(final)
-    }
-
-    useEffect(() => {
-        if (shoeItem) setTrimmedName(shoeItem.name)
-    }, [shoeItem])
+const ShoeBox = ({ shoeItem }) => {
 
     return (
-        <Link to={`/product/${shoeItem?.slug}`}>
-            <div className={`shoe-box ${role === 'home' && 'shoe-home'}`}>
+        <Link to={`/book/${shoeItem?._id}`}>
+            <div className="shoe-box">
                 <div className='img-container'>
-                    <img src={shoeItem?.images[0]} alt={shoeItem?.name} />
+                    <img src={shoeItem?.image} alt={shoeItem?.title} />
                 </div>
+
                 <div className='shoe-text'>
                     <p className='shoe-name'>
-                        {shoeName && shoeName}
+                        {shoeItem?.title}
                     </p>
-                    <p className='shoe-cost'>Rs. {shoeItem?.cost}</p>
-                    <button className='btn-submit'>BUY NOW</button>
+                    <button className='btn-submit'>View More</button>
                 </div>
             </div>
         </Link>

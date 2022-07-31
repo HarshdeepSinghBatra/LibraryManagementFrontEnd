@@ -5,6 +5,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import SlickArrowNext from './SlickArrowNext'
 import SlickArrowPrev from './SlickArrowPrev'
+import { Link } from 'react-router-dom'
 
 const ShoeCarousel = ({ heading, shoesData }) => {
 
@@ -46,12 +47,13 @@ const ShoeCarousel = ({ heading, shoesData }) => {
             },
         ],
     }
+
     return (
         <section>
-            <h2>{heading}</h2>
+            <Link to={`/books?category=${heading[0] + heading.substring(1).toLowerCase()}`} className='link'> <h2>{heading}</h2> </Link>
             <Slider {...settings}>
                 {shoeList?.map((shoeItem, index) => (
-                    <ShoeBox key={index} role='home' shoeItem={shoeItem} />
+                    <ShoeBox key={index} shoeItem={shoeItem} />
                 ))}
                 {shoeList ? null : <p className='temp-slider-adjust'></p>}
             </Slider>

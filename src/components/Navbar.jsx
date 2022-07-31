@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { FaRegUser } from 'react-icons/fa'
-import { AiOutlineClose } from 'react-icons/ai'
+import { MdLibraryBooks } from 'react-icons/md'
 import { GiHamburgerMenu } from 'react-icons/gi'
-import { BsCartCheck } from 'react-icons/bs'
 import Cart from './Cart'
 
 const Navbar = ({ cartItems, setCartItems }) => {
@@ -42,24 +41,7 @@ const Navbar = ({ cartItems, setCartItems }) => {
         return () => window.removeEventListener('scroll', handleScroll)
     })
 
-    const LINKS = [
-        {
-            text: 'NEW ARRIVALS',
-            link: '/footwear/latest',
-        },
-        {
-            text: 'WOMEN',
-            link: '/footwear/women',
-        },
-        {
-            text: 'MEN',
-            link: '/footwear/men',
-        },
-        {
-            text: 'BRANDS',
-            link: '/footwear/brands',
-        },
-    ]
+ 
 
     const logoutUser = () => {
         localStorage.clear()
@@ -79,13 +61,7 @@ const Navbar = ({ cartItems, setCartItems }) => {
                         <img src='/images/logo.png' alt='' />
                     </Link>
                 </div>
-                    <ul className='nav-list'>
-                        {LINKS.map((item, index) => (
-                            <li key={index}>
-                                <Link to={item.link}>{item.text}</Link>
-                            </li>
-                        ))}
-                    </ul>
+                    
                
                 <div className='nav-buttons'>
                         {localStorage.getItem('userName') ? (
@@ -109,11 +85,11 @@ const Navbar = ({ cartItems, setCartItems }) => {
                                 <span
                                     className="cart-badge"
                                 >
-                                    {cartItems?.reduce((total, item) => total + item.quantity, 0)}
+                                    {cartItems?.reduce((total, item) => total + 1, 0)}
                                 </span>
-                                <BsCartCheck className='nav-icon' />
+                                <MdLibraryBooks className='nav-icon' />
                             </button>
-                        {isCartOpen && <Cart isScrolled={isScrolled} cartItems={cartItems} setCartItems={setCartItems} />} 
+                        {isCartOpen && <Cart isScrolled={isScrolled} cartItems={cartItems} />} 
                         </div>
                 </div>
 
@@ -127,18 +103,7 @@ const Navbar = ({ cartItems, setCartItems }) => {
                     isNavMenuOpen && 'menu-open'
                 }`}
             >
-                <ul>
-                    {LINKS.map((item, index) => (
-                        <li key={index}>
-                            <Link to={item.link}>{item.text}</Link>
-                        </li>
-                    ))}
-
-                    <AiOutlineClose
-                        className='mobile-nav-close'
-                        onClick={() => setIsNavMenuOpen(false)}
-                    />
-                </ul>
+               
             </div>
         </>
     )

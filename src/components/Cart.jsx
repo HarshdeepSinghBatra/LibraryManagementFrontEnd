@@ -1,54 +1,65 @@
 import React from 'react'
-import { BsTrash } from 'react-icons/bs'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
+import { Link, useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+const Cart = ({ isScrolled, cartItems }) => { 
 
-const Cart = ({ isScrolled, cartItems, setCartItems }) => { 
+    const navigate = useNavigate()
 
-    const deletCartItem = async (id) => {
-        try {
-            const res = await axios.delete(`/api/cart/deleteItem/${id}`)
-        } catch (err) {
-            console.log(err)
+    const notifyToastNotLoggedIn = () => {
+        toast.error('Login to visit profile', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+        })
+    }
+
+    const navigateToProfile = (e) => {
+        e.preventDefault()
+        if (!localStorage.getItem('userName')) notifyToastNotLoggedIn()
+        else {
+            navigate("/profile")
         }
     }
 
-    const handleRemoveCartItem = cartItem => {
-        deletCartItem(cartItem.id)
-        setCartItems(cartItem)
-    }
-
-    const getTotalItemsCount = cartItems => (
-        cartItems?.reduce((total, item) => total + item.quantity, 0)
-    )
 
   return (
     <div className={`cart-container ${isScrolled && 'scrolled'}`}>
+        <ToastContainer
+                    position='top-right'
+                    autoClose={3000}
+                    hideProgressBar
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover={false}
+                />
         <div className="cart-header">
-            <p className="cart-header-quantity"> <span>{getTotalItemsCount(cartItems)}</span> {getTotalItemsCount(cartItems) > 1 ? "items" : "item"} in Cart </p>
-            <p className="cart-header-price">Cart Subtotal: <span>Rs. {cartItems?.reduce((total, item) => total + item.cost, 0)}</span></p>
+            <p className="cart-header-quantity"> <span>{cartItems?.reduce((total, item) => total + 1, 0)}</span> active {cartItems?.reduce((total, item) => total + 1, 0) == 1 ? "request" : "requests"}</p>
         </div>
 
-        {cartItems?.map((cartItem, index) => (
+        {cartItems.length > 0 ? cartItems?.map((cartItem, index) => (
             <div className="cart-item" key={index}>
                 <div className="cart-image img-container">
-                    <img src={cartItem.imageURL} alt="" />
+                    <img src={cartItem.bookId.image} alt="" />
                 </div>
                 <div className="cart-content">
-                    <p className="cart-item-name">{cartItem.name}</p>
-                    <p className="cart-item-size"> <span>Size:</span> {cartItem.size}</p>
-                    <p className="cart-item-cost"> <span>Price:</span> Rs. {cartItem.cost}</p>
-                    <p className="cart-item-quantity"><span>Qty:</span> {cartItem.quantity}</p>
+                    <p className="cart-item-name"> <span>Title: </span> {cartItem.bookId.title}</p>
+                    <p className="cart-item-cost"> <span>Author:</span> {cartItem.bookId.author}</p>
+                    <p className="cart-item-quantity"><span>Category:</span> {cartItem.bookId.category}</p>
                 </div>
-                <span className="cart-delete">
-                    <BsTrash className='cart-icon' onClick={() => handleRemoveCartItem(cartItem)} />
-                </span>
             </div>
-        ))}
+        )) :
+        <p className="cart-empty">You have no active issue requests</p> 
+        }
 
-        {cartItems?.length === 0 ? (
-            <p className="cart-empty">You have no items in your shopping cart</p>
-        ) : <Link to="#" className="cart-modal-button btn-submit">PROCEED TO CHECKOUT</Link>}
+            
+            <Link to="/profile" onClick={navigateToProfile} className="cart-modal-button btn-submit">Visit Profile</Link>
         
         
     </div>

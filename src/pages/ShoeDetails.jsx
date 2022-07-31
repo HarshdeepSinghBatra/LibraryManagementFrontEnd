@@ -1,103 +1,97 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai'
-import { useForm } from 'react-hook-form'
+import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import RelatedProducts from '../components/RelatedProducts'
-import ProductImagesSlider from '../components/ProductImagesSlider'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 
 const ShoeDetails = ({ setCartItems }) => {
 
+    const [bookRequestStatus, setBookRequestStatus] = useState(0)
+
+    const navigate = useNavigate()
+    useEffect(() => {
+        if (localStorage.getItem('userName')) {
+          if (localStorage.getItem('userName') === 'admin@iiitl.ac.in') {
+            navigate("/admin")
+          }
+        }
+      }, [])
+
     const [shoeData, setShoeData] = useState() 
 
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        watch,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            productQuantity: 1,
-        },
-    })
+    const { bookId } = useParams()
 
-    const [activeImgURL, setActiveImgURL] = useState("")
-
-    const curr_size = watch('productSize', false)
-    const curr_quantity = watch('productQuantity', false)
-
-    const scrollPosRef = useRef()
-    const sizeRef = useRef()
-
-    const { shoeSlug } = useParams()
-
-    const getDataBySlug = async (slug) => {
+    const getIssueRequestsByUserIdAndBook = async () => {
         try {
-            const res = await axios.get(`/api/shoes/${slug}`)
+            const res = await axios.get(`/api/requestissue/${localStorage.getItem('userName')}/${shoeData._id}`)
+            if (res.data.length > 0) {
+                    setBookRequestStatus(1)
+                }
+            
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const getIssuedBookById = async () => {
+        try {
+            const res = await axios.get(`/api/issue/${localStorage.getItem('userName')}/${shoeData._id}`)
+            if (res.data.length > 0) {
+                setBookRequestStatus(2)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    
+    useEffect(() => {
+        if (shoeData) {
+            getIssueRequestsByUserIdAndBook()
+            getIssuedBookById()
+        }
+    }, [shoeData])
+
+    const getDataById = async (id) => {
+        try {
+            const res = await axios.get(`/api/book/${id}`)
             const data = res.data
             setShoeData(data)
-            setActiveImgURL(data.images[0])
         } catch (err) {
             console.error(err)
         }
     }
 
     useEffect(() => {
-        if (shoeSlug) {
-            getDataBySlug(shoeSlug)
+        if (bookId) {
+            getDataById(bookId)
         }
-    }, [shoeSlug])
-
-    useEffect(() => {
-        if (shoeData) setValue('status', shoeData.status)
-    }, [shoeData])
-    
-    useEffect(() => {
-        if(!errors.productSize || !sizeRef) return
-        if (window.innerWidth <= 768) {
-            const observer = new IntersectionObserver(entries => {
-                if (entries[0].isIntersecting) {
-                    observer.unobserve(sizeRef.current)
-                    return
-                }
-                window.scrollTo(0, scrollPosRef.current.offsetTop)
-                observer.unobserve(sizeRef.current)
-            }, {
-                threshold: 1,
-            })
-    
-            observer.observe(sizeRef.current)
-        }
-
-        sizeRef.current.classList.add("shake-error")
-        sizeRef.current.addEventListener("animationend", () => {
-            sizeRef.current.classList.remove("shake-error")
-        })
-
-    }, [errors.productSize], sizeRef)
-
-    useEffect(() => {
-        if (curr_quantity < 1) setValue('productQuantity', 1)
-    }, [curr_quantity, setValue])
-
-    const handleImageActive = e => {
-        document.querySelector(".img-container.active-thumbnail").classList.remove("active-thumbnail")
-        e.target.classList.add("active-thumbnail")
-        setActiveImgURL(e.target.firstChild.getAttribute("src"))
-    }
-
-    const handleSizeActive = e => {
-        document
-            .querySelector('label.active-size')
-            ?.classList.remove('active-size')
-        e.target.classList.add('active-size')        
-    }
+    }, [bookId])
 
     const notifyToastSuccess = () => {
-        toast.success('Item added to cart', {
+        toast.success('Book issue requested', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+        })
+    }
+    
+    const notifyToastAlreadyRequested = () => {
+        toast.error('Already requested issue for this book', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+        })
+    }
+    const notifyToastAlreadyIssued = () => {
+        toast.error('You have issued this book already', {
             position: 'top-right',
             autoClose: 3000,
             hideProgressBar: true,
@@ -108,7 +102,7 @@ const ShoeDetails = ({ setCartItems }) => {
         })
     }
     const notifyToastFailure = () => {
-        toast.error('Item out of stock', {
+        toast.error('Book not available at this moment', {
             position: 'top-right',
             autoClose: 3000,
             hideProgressBar: true,
@@ -118,9 +112,8 @@ const ShoeDetails = ({ setCartItems }) => {
             progress: undefined,
         })
     }
-
     const notifyToastNotLoggedIn = () => {
-        toast.error('Login first to add item to cart', {
+        toast.error('Login to request book issue', {
             position: 'top-right',
             autoClose: 3000,
             hideProgressBar: true,
@@ -133,56 +126,43 @@ const ShoeDetails = ({ setCartItems }) => {
 
     const addCartItem = async (data) => {
         try {
-            const res = await axios.post('/api/cart/insertItem', {
-                itemId: Date.now(),
-                itemName: shoeData.name,
-                itemCost: shoeData.cost * data.productQuantity,
-                itemSize: data.productSize,
-                itemQuantity: data.productQuantity,
-                imageURL: shoeData.images[0],
-                userEmail: localStorage.getItem("userName")
+            const res = await axios.post('/api/requestIssue', {
+                bookId: data._id,
+                studentId: localStorage.getItem("userName")
             })
-
-            setCartItems({id: Date.now(), cost: shoeData.cost * data.productQuantity, imageURL: shoeData.images[0], name: shoeData.name, quantity: data.productQuantity, size: data.productSize, userEmail: localStorage.getItem("userName")})
-
+            notifyToastSuccess()
+            setBookRequestStatus(1)
+            setCartItems({
+                bookId: data, 
+                studentId: localStorage.getItem("userName"), 
+                requestDate: Date.now()
+            })
+            
         } catch (err) {
             console.log(err)
         }
     }
 
-    const onSubmit = data => {
+    const onSubmit = () => {
         if (!localStorage.getItem('userName')) notifyToastNotLoggedIn()
-        else if (!data.status) notifyToastFailure()
+        else if (bookRequestStatus === 1) notifyToastAlreadyRequested()
+        else if (bookRequestStatus === 2) notifyToastAlreadyIssued()
+        else if (shoeData.quantity === 0) notifyToastFailure()
         else {
-            // addCartItem(data)
-            console.log(data)
-            addCartItem(data)
-            notifyToastSuccess()
+            addCartItem(shoeData)
         }
     }
 
     return (
         <main>
             <section className='product-overview'>                
-                <div className='product-images'>
-                    <div className="thumbnails">
-                        {shoeData?.images.map((item, index) => (
-                            <div className={`img-container ${index === 0 && "active-thumbnail"}`} key={index} onClick={e => handleImageActive(e)}>
-                                <img src={item} alt="thumbnail-product" />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="active-img">
-                        <div className="img-container">
-                        <img src={activeImgURL} alt="active-product" />
-                        </div>
+                <div className='product-image'>
+                    <div className="img-container">
+                        <img src={shoeData?.image} alt="book" />
                     </div>
                 </div>
-                <ProductImagesSlider images={shoeData?.images} />
-                <form
+                <div
                     className='product-text'
-                    onSubmit={handleSubmit(onSubmit)}
-                    ref={scrollPosRef}
                 >
                   <ToastContainer
                     position='top-right'
@@ -196,85 +176,24 @@ const ShoeDetails = ({ setCartItems }) => {
                     pauseOnHover={false}
                 />
                     <h1 className='product-title'>
-                        {shoeData?.name}
+                        {shoeData?.title.toUpperCase()}
                     </h1>
-                    <p className='product-cost'>
-                        Rs. {shoeData?.cost} <span>(Inclusive of all taxes)</span>
-                    </p>
+                    
                     <p className='product-status'>
                         AVAILABILITY:{' '}
-                        <span className='available'> {shoeData?.status ? (<span className='available'>IN STOCK</span>) : ((<span className='not-available'>OUT OF STOCK</span>))}</span>
-                        <input type="hidden" {...register("status")} />
+                        <span className='available'> {shoeData?.quantity > 0 ? (<span className='available'>AVAILABLE</span>) : ((<span className='not-available'>NOT AVAILABLE</span>))}</span>
                     </p>
-                    <div className='product-size'>
+                    
+                    <section className='product-details'>
+                        <span>DESCRIPTION</span>
                         <p>
-                            SIZE: <span>{curr_size}</span>
+                            {shoeData?.description}
                         </p>
-                        <fieldset>
-                            <ul ref={sizeRef}>
-                                {shoeData?.size.map((item, index) => (
-                                    <li key={index}>
-                                        <label
-                                            htmlFor={`size${index}`}
-                                            onClick={e => handleSizeActive(e)}
-                                        >
-                                            {item}
-                                        </label>
-                                        <input
-                                            type='radio'
-                                            id={`size${index}`}
-                                            value={item}
-                                            {...register('productSize', {
-                                                required: true,
-                                            })}
-                                        />
-                                    </li>
-                                ))}
-                            </ul>
-                            {
-                                errors.productSize?.type === 'required' && (
-                                    <p className='form-error'>
-                                        Please choose a size
-                                    </p>
-                                ) }
-                        </fieldset>
-                    </div>
-                    <div className='product-quantity'>
-                        <button
-                            type='button'
-                            onClick={() =>
-                                setValue(
-                                    'productQuantity',
-                                    curr_quantity > 1 ? parseInt(curr_quantity) - 1 : 1
-                                )
-                            }
-                        >
-                            <AiOutlineMinus />
-                        </button>
-                        <input type='number' {...register('productQuantity')} />
-                        <button
-                            type='button'
-                            onClick={() =>
-                                setValue('productQuantity', parseInt(curr_quantity) + 1)
-                            }
-                        >
-                            <AiOutlinePlus />
-                        </button>
-                    </div>
-                    <button type='submit' className='btn-submit'>
-                        ADD TO CART
+                    </section>
+                    <button onClick={onSubmit} className='btn-submit'>
+                        REQUEST ISSUE
                     </button>
-                </form>
-            </section>
-            <section className='product-details'>
-                <span>DETAILS</span>
-                <p>
-                    {shoeData?.details}
-                </p>
-            </section>
-            <section className='related-products'>
-                <h2>RELATED PRODUCTS</h2>
-                <RelatedProducts shoeItem={shoeData} />
+                </div>
             </section>
         </main>
     )

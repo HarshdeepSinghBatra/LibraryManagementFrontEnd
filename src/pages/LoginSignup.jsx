@@ -34,7 +34,6 @@ const LoginSignup = () => {
             )} 
             <div className='login-signup-container'>
                 <Login setAuthError={val => setAuthError(val)} setAuthSuccess={val => setAuthSuccess(val)} />
-                <Signup setAuthError={val => setAuthError(val)} setAuthSuccess={val => setAuthSuccess(val)} />
             </div>
         </main>
     )

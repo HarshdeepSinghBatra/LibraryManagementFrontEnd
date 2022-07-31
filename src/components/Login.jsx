@@ -25,7 +25,7 @@ const Login = ({ setAuthError, setAuthSuccess }) => {
 
     const loginUser = async (userData) => {
         try {
-            const res = await axios.post("/api/login", {
+            const res = await axios.post("/api/users/login", {
                 email: userData.email,
                 password: userData.password
             })
@@ -87,7 +87,7 @@ const Login = ({ setAuthError, setAuthSuccess }) => {
                             <p className='form-error'>Password is required</p>
                         ) : null)}
                 </fieldset>
-                <Link to='#'>Forgot password?</Link>
+                {/* <Link to='#'>Forgot password?</Link> */}
                 <button className='btn-submit' type='submit'>
                     LOGIN
                 </button>
