@@ -57,7 +57,6 @@ const FootwearCategorySidebar = ({ isMobileFilterOpen, setIsMobileFilterOpen, sh
 
 
     const getDataByFilter = filters => {
-        console.log(filters)
         let data = []
 
         filters.forEach(filter => {
