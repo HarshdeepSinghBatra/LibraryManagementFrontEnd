@@ -1616,13 +1616,71 @@ footer a:hover {
         font-size: 1rem;
     }
     /* FOOTWEAR */
-    .footwear-category {
-        font-size: 0.7rem;
+    .footwear-container {
+        width: 100%;
+        gap: 0;
+        padding: 0;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .shoe-box {
+        border: 1px solid var(--color-gray);
     }
 
-    .footwear-sidebar span button {
-        font-size: 0.8rem;
+    .shoe-home {
+        border: none;
     }
+
+    .footwear-main {
+        grid-template-columns: 1fr;
+    }
+
+    .footwear-sidebar {
+        z-index: 500;
+        position: fixed;
+        background: var(--color-light);
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        transform: translateY(100%);
+    }
+
+    .footwear-sidebar.filter-open {
+        transform: translateY(0);
+    }
+
+    .mobile-toggle-filter {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--color-dark);
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        align-items: center;
+        z-index: 500;
+    }
+
+    .mobile-toggle-filter button {
+        background: none;
+        border: none;
+        color: var(--color-light);
+        padding: 0.7rem 0;
+        font-size: 0.9rem;
+        padding-left: 0;
+    }
+
+    .filter-icon {
+        fill: var(--color-light);
+        font-size: 1.5rem;
+    }
+
+    .footwear-category {
+        font-size: 0.9rem;
+    }
+
 
     /* PRODUCT DETAILS */
 
