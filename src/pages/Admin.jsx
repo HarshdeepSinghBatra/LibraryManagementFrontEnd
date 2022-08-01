@@ -81,7 +81,7 @@ const Admin = () => {
                 )) }                
             </ul>
         </aside>
-        {activeSidebar === 0 ? <RequestsTable /> : (activeSidebar === 1 ? <IssuedBooksTable /> : (activeSidebar === 2 ? <AddBookForm  setBooks={val => setBooks(prev => [...prev, val])} categories={books.map(item => item.category)} /> : <ManageBooksTable books={books} setBooks={(id, action, updatedBook) => handleManageActions(id, action, updatedBook)} />))}
+        {activeSidebar === 0 ? <RequestsTable /> : (activeSidebar === 1 ? <IssuedBooksTable /> : (activeSidebar === 2 ? <AddBookForm  setBooks={val => setBooks(prev => [...prev, val])} categories={[...new Set(books.map(item => item.category))]} /> : <ManageBooksTable books={books} setBooks={(id, action, updatedBook) => handleManageActions(id, action, updatedBook)} />))}
     </div>
   )
 }
