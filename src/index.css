@@ -807,6 +807,7 @@ text-align: left;
 .table-container {
     overflow-x: auto;
     text-align: center;
+    min-height: 75vh;
 }
 
 table {
